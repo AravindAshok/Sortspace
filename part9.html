@@ -34,6 +34,13 @@ var stars;
 var score = 0;
 var scoreText;
 var boxes;
+var map = {};
+var numbers = [];
+var arrangements = new Map();
+var step = 1;
+var ind = 0;
+var prev = [];
+var current = [];
 
 function create() {
 
@@ -45,7 +52,7 @@ function create() {
 
     boxes = game.add.group();
 
-    var N = 10;
+    var N = 5;
     generateNumbers(N);
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
@@ -83,11 +90,13 @@ function update() {
     text.y = Math.floor(box.y + box.height / 2);    
 */
     //  Collide the player and the stars with the platforms
+
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(stars, platforms);
 
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
     game.physics.arcade.overlap(player, boxes, selectBox, null, this);
+
 
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
@@ -140,7 +149,24 @@ function selectBox (player, box) {
     
     // Removes the star from the screen
     // box.kill();
-    box.tint = 0x00ff00;
+    var val = map[box.name];
+    var arrangement = arrangements.get(step);
+    console.log(arrangement);
+    console.log(arrangement[ind]);
+    console.log(val);
+    console.log("\n");
+    if(arrangement[ind] === parseInt(val)){
+        box.tint = 0x00ff00;
+        ind++;
+        if(ind == numbers.length){
+            nextStep();
+        }
+        game.physics.arcade.collide(player, boxes);
+    }
+    else{
+        // box.tint = 0xff0000;
+    }
+
 
     //  Add and update the score
 
@@ -152,31 +178,110 @@ function generateNumbers(N){
         var num = Math.floor(Math.random() * 100);
         var x = Math.floor(Math.random() * 900);
         var y = Math.floor(Math.random() * 400);
-        createNumber(num, x, y);
+        createNumber(num, x, y, i);
+        numbers.push(num);
     }
+    numbers = shuffle(numbers);
+    prev = numbers;
+    bubbleSort();
+/*    for(var i = 0; i<arrangements[0].length;i++)
+        console.log(arrangements[0][i]);
+
+    for(var i = 0; i< arrangements[1].length;i++)
+        console.log(arrangements[1][i]);
+*//*    for(var i = 0; i<current.length;i++)
+        console.log(current[i]);
+*/
 }
 
-function createNumber(num, x, y){
-/*    box = game.add.sprite(x, y, 'square');
-    box.inputEnabled = true;
-    box.input.enableDrag();
-    box.scale.set(0.01,0.01);
-
-    var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, wordWrapWidth: box.width, align: "center", backgroundColor: "#ffff00" };
-
-    text = game.add.text(0, 0, num, style);
-    text.anchor.set(0.5);
-*/
+function createNumber(num, x, y, i){
     var box = boxes.create(x, y, 'square');
     box.scale.set(0.01,0.01);
-
-    var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, wordWrapWidth: box.width, align: "center", backgroundColor: "#ffff00" };
+    box.name = "box" + i
+    map[box.name] = num;
+    var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, wordWrapWidth: box.width, align: "center", backgroundColor: "#ffffff" };
 
     var text = game.add.text(0, 0, num, style);
     text.anchor.set(0.5);
     text.x = Math.floor(box.x + box.width / 2);
     text.y = Math.floor(box.y + box.height / 2);
 
+}
+
+function nextStep(){
+    step += 1;
+
+    boxes.forEach(function(box){
+        box.tint = 0x000000;
+    }, this);
+
+    prev = current;
+    current = [];
+}
+
+function bubbleSort() {  
+    var count = 1;
+    var length = numbers.length;
+    // arrangements[count] = numbers;
+    // for(var k=0;k<numbers.length;k++)
+    //     arrangements[count][k] = numbers[k];
+
+    // arrangements.push(numbers);
+/*    for(var k =0;k<numbers.length;k++)
+        console.log(numbers[k]);
+    console.log("\n");            
+*/
+    arrangements.set(0, numbers);
+    for (var i = (length - 1); i >= 0; i--) {
+        //Number of passes
+        for (var j = (length - i); j > 0; j--) {
+            //Compare the adjacent positions
+            if (numbers[j] < numbers[j - 1]) {
+                //Swap the numbers
+                var tmp = numbers[j];
+                numbers[j] = numbers[j - 1];
+                numbers[j - 1] = tmp;
+            }
+/*            for(var k =0;k<numbers.length;k++)
+                console.log(numbers[k]);
+            console.log("\n");
+*/
+        }
+        arrangements.set(count,numbers);
+        for(item in arrangements){
+            console.log(arrangements.get(item).join());
+        }
+        console.log("\n");
+        // for(var k=0;k<numbers.length;k++)
+        //     arrangements[count][k] = numbers[k];
+        count++;            
+    }
+/*    for(var i = 0; i< arrangements.length; i++){
+        var list_temp = arrangements[i];
+        for(var j =0;j<list_temp.length;j++)
+            console.log(list_temp[j]);
+        console.log("\n");
+    }
+*/
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
 
 </script>
