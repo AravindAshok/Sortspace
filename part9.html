@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'snake', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1000, 500, Phaser.AUTO, 'snake', { preload: preload, create: create, update: update });
 
 function preload() {
 
@@ -60,6 +60,7 @@ function create() {
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
+    game.physics.arcade.enable(boxes);
 
     //  Player physics properties. Give the little guy a slight bounce.
     player.body.bounce.y = 0;
@@ -86,7 +87,7 @@ function update() {
     game.physics.arcade.collide(stars, platforms);
 
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-    game.physics.arcade.overlap(player, stars, collectStar, null, this);
+    game.physics.arcade.overlap(player, boxes, selectBox, null, this);
 
     //  Reset the players velocity (movement)
     player.body.velocity.x = 0;
@@ -135,10 +136,11 @@ function update() {
 */
 }
 
-function collectStar (player, star) {
+function selectBox (player, box) {
     
     // Removes the star from the screen
-    star.kill();
+    // box.kill();
+    box.tint = 0x00ff00;
 
     //  Add and update the score
 
@@ -148,8 +150,8 @@ function generateNumbers(N){
     for (var i = 0; i < N; i++)
     {
         var num = Math.floor(Math.random() * 100);
-        var x = Math.floor(Math.random() * 700);
-        var y = Math.floor(Math.random() * 500);
+        var x = Math.floor(Math.random() * 900);
+        var y = Math.floor(Math.random() * 400);
         createNumber(num, x, y);
     }
 }
@@ -174,8 +176,6 @@ function createNumber(num, x, y){
     text.anchor.set(0.5);
     text.x = Math.floor(box.x + box.width / 2);
     text.y = Math.floor(box.y + box.height / 2);
-
-    
 
 }
 
