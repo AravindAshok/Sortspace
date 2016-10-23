@@ -33,8 +33,7 @@ var cursors;
 var stars;
 var score = 0;
 var scoreText;
-var text;
-var box;
+var boxes;
 
 function create() {
 
@@ -43,6 +42,8 @@ function create() {
 
     //  A simple background for our game
     game.add.sprite(0, 0, 'space');
+
+    boxes = game.add.group();
 
     var N = 10;
     generateNumbers(N);
@@ -77,9 +78,9 @@ function create() {
 
 function update() {
 
-    text.x = Math.floor(box.x + box.width / 2);
+/*    text.x = Math.floor(box.x + box.width / 2);
     text.y = Math.floor(box.y + box.height / 2);    
-
+*/
     //  Collide the player and the stars with the platforms
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(stars, platforms);
@@ -154,7 +155,7 @@ function generateNumbers(N){
 }
 
 function createNumber(num, x, y){
-    box = game.add.sprite(x, y, 'square');
+/*    box = game.add.sprite(x, y, 'square');
     box.inputEnabled = true;
     box.input.enableDrag();
     box.scale.set(0.01,0.01);
@@ -163,6 +164,18 @@ function createNumber(num, x, y){
 
     text = game.add.text(0, 0, num, style);
     text.anchor.set(0.5);
+*/
+    var box = boxes.create(x, y, 'square');
+    box.scale.set(0.01,0.01);
+
+    var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, wordWrapWidth: box.width, align: "center", backgroundColor: "#ffff00" };
+
+    var text = game.add.text(0, 0, num, style);
+    text.anchor.set(0.5);
+    text.x = Math.floor(box.x + box.width / 2);
+    text.y = Math.floor(box.y + box.height / 2);
+
+    
 
 }
 
